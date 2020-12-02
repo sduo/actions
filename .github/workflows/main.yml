@@ -1,0 +1,16 @@
+# 通过 ACME 申请 Let's Encrypt 证书
+
+name: ACME
+on:  
+  # 手动触发
+  workflow_dispatch:
+jobs:
+  ACME:
+    runs-on: ubuntu-latest
+    steps:
+      - name: '检出 acmesh-official/acme.sh 仓库'      
+        uses: actions/checkout@v2
+        with:
+          repository: acmesh-official/acme.sh
+          path: acme.sh
+          submodules: true
