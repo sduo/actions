@@ -5,8 +5,9 @@ on:
   # 手动触发
   workflow_dispatch:
 env:
-  ACME_ACCOUNT_EMAIL: 'test@test.com'
+  ACME_ACCOUNT_EMAIL: test@test.com
   ACME_ACCOUNT_KEY_LENGTH: 4096
+  ACME_CONFIGURATION: CF_Email=123
 jobs:
   ACME:
     runs-on: ubuntu-latest
@@ -19,10 +20,15 @@ jobs:
           submodules: true
       - name: '安装 acme.sh 脚本'
         run: |
-          ls
           cd ${GITHUB_WORKSPACE}/acme.sh
-          ls
           ./acme.sh --install --no-color --nocron --noprofile --accountemail ${ACME_ACCOUNT_EMAIL} --accountkeylength ${ACME_ACCOUNT_KEY_LENGTH}
           cd ${GITHUB_WORKSPACE}
-          ls
+          echo "${HOME}/.acme.sh" >> ${GITHUB_PATH}
+      - name: '检查 acme.sh 版本'
+        run: acme.sh --version
+      - name: '设定 acme.sh 配置 '
+        run: echo "${ACME_EXPORTS}" >> ${GITHUB_ENV}
+      - name: 测试 Git 
+        run: git version
+        
       
