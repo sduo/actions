@@ -12,6 +12,7 @@ env:
   ACME_DNS: dns_cf
   ACME_DNS_SLEEP: 30
   ACME_RSA_KEY_LENGTH: 4096
+  ACME_ECC_KEY_LENGTH: ec-384
   ACME_DOMAIN: acme.cc
 jobs:
   ACME:
@@ -38,21 +39,24 @@ jobs:
         with:
           path: acme
           submodules: true
+      - name: '检查 git 版本'
+        run: git version
       - name: '执行清理'
         run: |
-          ls
           cd ${GITHUB_WORKSPACE}/acme
-          ls
           rm --force --recursive ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}/
-          ls
           mkdir --parents ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}
-          ls
-          cd ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}
-          ls
           cd ${GITHUB_WORKSPACE}
-          ls
-      
-      
-        
-        
+      - name: '申请 RSA 证书'
+        run: acme.sh --issue --staging --no-color --force --ocsp --days ${ACME_DAYS} --dns ${ACME_DNS} --dnssleep ${ACME_DNS_SLEEP} --keylength ${ACME_RSA_KEY_LENGTH} --domain *.${ACME_DOMAIN} --domain ${ACME_DOMAIN}
+      - name: '申请 ECC 证书'
+        run: acme.sh --issue --staging --no-color --force --ocsp --days ${ACME_DAYS} --dns ${ACME_DNS} --dnssleep ${ACME_DNS_SLEEP} --keylength ${ACME_ECC_KEY_LENGTH} --domain *.${ACME_DOMAIN} --domain ${ACME_DOMAIN}
+      - name: '复制 RSA 证书'
+        run: acme.sh --install-cert --no-color --domain *.${ACME_DOMAIN} --key-file ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}/rsa.${ACME_DOMAIN}.key --fullchain-file ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}/rsa.${ACME_DOMAIN}.fullchain.cert
+      - name: '复制 ECC 证书'
+        run: acme.sh --install-cert --no-color --ecc --domain *.${ACME_DOMAIN} --key-file ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}/ecc.${ACME_DOMAIN}.key --fullchain-file ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}/ecc.${ACME_DOMAIN}.fullchain.cert
+      - name: '推送证书'
+        run: |
+          ls ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}/
+          
       
