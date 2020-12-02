@@ -5,9 +5,14 @@ on:
   # 手动触发
   workflow_dispatch:
 env:
-  ACME_ACCOUNT_EMAIL: test@test.com
+  ACME_ACCOUNT_EMAIL: acme@acme.cc
   ACME_ACCOUNT_KEY_LENGTH: 4096
   ACME_CONFIGURATION: CF_Email=123
+  ACME_DAYS: 60
+  ACME_DNS: dns_cf
+  ACME_DNS_SLEEP: 30
+  ACME_RSA_KEY_LENGTH: 4096
+  ACME_DOMAIN: acme.cc
 jobs:
   ACME:
     runs-on: ubuntu-latest
@@ -26,9 +31,28 @@ jobs:
           echo "${HOME}/.acme.sh" >> ${GITHUB_PATH}
       - name: '检查 acme.sh 版本'
         run: acme.sh --version
-      - name: '设定 acme.sh 配置 '
+      - name: '设定 acme.sh 配置'
         run: echo "${ACME_EXPORTS}" >> ${GITHUB_ENV}
-      - name: 测试 Git 
-        run: git version
+      - name: '检出仓库'
+        uses: actions/checkout@v2
+        with:
+          path: acme
+          submodules: true
+      - name: '执行清理'
+        run: |
+          ls
+          cd ${GITHUB_WORKSPACE}/acme
+          ls
+          rm --force --recursive ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}/
+          ls
+          mkdir --parents ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}
+          ls
+          cd ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}
+          ls
+          cd ${GITHUB_WORKSPACE}
+          ls
+      
+      
+        
         
       
