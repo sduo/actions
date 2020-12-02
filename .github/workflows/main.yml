@@ -39,18 +39,14 @@ jobs:
         with:
           path: acme
           submodules: true
-      - name: '设定 git 配置'
+      - name: '检查 git 版本'
         run: git version
-      - name: ''
+      - name: '设定 git 配置'
         run: |
           git config --global user.email github-actions@github.com
           git config --global user.name github-actions
       - name: '执行清理'
-        run: |
-          cd ${GITHUB_WORKSPACE}/acme
-          rm --force --recursive ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}/
-          mkdir --parents ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}          
-          cd ${GITHUB_WORKSPACE}
+        run: mkdir --parents ${GITHUB_WORKSPACE}/acme/${ACME_DOMAIN}
       # - name: '申请 RSA 证书'
       #  run: acme.sh --issue --staging --no-color --force --ocsp --days ${ACME_DAYS} --dns ${ACME_DNS} --dnssleep ${ACME_DNS_SLEEP} --keylength ${ACME_RSA_KEY_LENGTH} --domain *.${ACME_DOMAIN} --domain ${ACME_DOMAIN}
       # - name: '申请 ECC 证书'
