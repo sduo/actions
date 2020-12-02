@@ -39,8 +39,12 @@ jobs:
         with:
           path: acme
           submodules: true
-      - name: '检查 git 版本'
+      - name: '设定 git 配置'
         run: git version
+      - name: ''
+        run: |
+          git config --global user.email github-actions@github.com
+          git config --global user.name github-actions
       - name: '执行清理'
         run: |
           cd ${GITHUB_WORKSPACE}/acme
@@ -64,8 +68,8 @@ jobs:
       - name: '推送证书'
         run: |
           cd ${GITHUB_WORKSPACE}/acme
-          ls
           git commit -m "generated"
           git push --force
+          cd ${GITHUB_WORKSPACE}
           
       
