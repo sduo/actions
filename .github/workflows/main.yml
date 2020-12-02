@@ -4,6 +4,9 @@ name: ACME
 on:  
   # 手动触发
   workflow_dispatch:
+env:
+  ACME_ACCOUNT_EMAIL: 'test@test.com'
+  ACME_ACCOUNT_KEY_LENGTH: 4096
 jobs:
   ACME:
     runs-on: ubuntu-latest
@@ -14,3 +17,12 @@ jobs:
           repository: acmesh-official/acme.sh
           path: acme.sh
           submodules: true
+      - name: '安装 acme.sh 脚本'
+        run: |
+          ls
+          cd ${GITHUB_WORKSPACE}/acme.sh
+          ls
+          ./acme.sh --install --no-color --nocron --noprofile --accountemail ${ACME_ACCOUNT_EMAIL} --accountkeylength ${ACME_ACCOUNT_KEY_LENGTH}
+          cd ${GITHUB_WORKSPACE}
+          ls
+      
